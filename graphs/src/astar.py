@@ -2,7 +2,6 @@ import math
 from heap_node import HeapNode
 from binary_heap import BinaryHeap
 from helper.map40 import Map40
-import sys
 
 class Map(object):
     def __init__(self, intersections, roads):
