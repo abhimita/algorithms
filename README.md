@@ -1,3 +1,7 @@
+## Literate programming
+
+In `literate programming` folder there is an example of Python notebook which uses `Latex` scripts for mathematical formulas. The markdown cells explain proof that iteration converges and basis behind the iterative formula for computing square root.
+
 ## A-star search algorithm
 
 A* is a graph algorithm that is used in pathfinding and graph traversal. 
