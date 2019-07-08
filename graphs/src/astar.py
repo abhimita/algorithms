@@ -2,6 +2,7 @@ import math
 from heap_node import HeapNode
 from binary_heap import BinaryHeap
 from helper.map40 import Map40
+import pydot_ng as pydot
 
 class Map(object):
     def __init__(self, intersections, roads):
@@ -16,10 +17,8 @@ class AStar():
         start_node_id: Index of start node
         dest_node_id: Index of destination node
     """
-    def __init__(self, map, start_node_id, dest_node_id):
+    def __init__(self, map):
         self.map = map
-        self.start_node_id = start_node_id
-        self.dest_node_id= dest_node_id
         # Hash set to keep track of open intersections. The hash set will contain intersection IDs only
         # and will be used to find out if an intersection ID is already there is the set
         self.open = set()
@@ -32,12 +31,7 @@ class AStar():
         # h = estimated cost of getting from current node to destination node
         # f = total cost = g + h
         self.cost = {}
-        # Initialize the cost structure of first intersection
-        self.cost[start_node_id] = {
-            'g': 0, # True cost of getting from start node to this node. This is calculated in terms of number of hops (edges)
-            'h': 0, # Estimated cost of getting this node to destination node
-            'f': 0  # Total cost. It is a computed field f = g + h
-        }
+
         # List used to store the actual path from destination path back to source intersection.
         # Once the shortest path to destination intersection is found, this will be reversed and returned as path from
         # source to destination
@@ -62,16 +56,22 @@ class AStar():
         return self.map.roads[current_node_id]
 
     # Method that performs A-star search
-    def search(self):
+    def search(self, start_node_id, dest_node_id):
+        # Initialize the cost structure of first intersection
+        self.cost[start_node_id] = {
+            'g': 0, # True cost of getting from start node to this node. This is calculated in terms of number of hops (edges)
+            'h': 0, # Estimated cost of getting this node to destination node
+            'f': 0  # Total cost. It is a computed field f = g + h
+        }
         # Put the start node as the first open node where the search starts
-        self.open.add(self.start_node_id)
-        self.cost_heap.insert(HeapNode({'id': self.start_node_id, 'f': 0, 'g': 0, 'h' : 0}, 'f'))
+        self.open.add(start_node_id)
+        self.cost_heap.insert(HeapNode({'id': start_node_id, 'f': 0, 'g': 0, 'h' : 0}, 'f'))
         iteration = 1
         while len(self.open) > 0:
             # Among all nodes which are open find the node with minimum total cost
             # This will be the nest node to explore
             current_node = self._get_node_with_min_cost()
-            if current_node.id == self.dest_node_id:
+            if current_node.id == dest_node_id:
                 end_node = current_node.id
                 while end_node is not None:
                     self.nodes_in_path.append(end_node)
@@ -91,8 +91,8 @@ class AStar():
                 # This heuristic will always be less than or equal to the true distance of the road
                 # connecting the two intersections
                 h = math.sqrt(
-                    math.pow(self.map.intersections[child][0] - self.map.intersections[self.dest_node_id][0], 2) + \
-                    math.pow(self.map.intersections[child][1] - self.map.intersections[self.dest_node_id][1], 2))
+                    math.pow(self.map.intersections[child][0] - self.map.intersections[dest_node_id][0], 2) + \
+                    math.pow(self.map.intersections[child][1] - self.map.intersections[dest_node_id][1], 2))
                 # If the child intersection is not in open set then put it in the list to explore
                 # Compute the cost (cost to reach this intersection, estimated cost to reach destination
                 # from here and total cost for this intersection
@@ -112,10 +112,36 @@ class AStar():
             #    sys.exit(0)
             iteration += 1
 
+    # Generates SVG diagram for the graph and the shortest path found using A* search
+    def draw_astar_map(self, path, colors, output_file):
+        graph = pydot.Dot(graph_type='graph', rankdir="LR")
+        nodes = {}
+        edges = set()
+
+        for k, v in self.map.intersections.items():
+            n = pydot.Node(k, shape="circle", style="filled", fillcolor="cyan" if k not in path else colors[0], tooltip="(%f,%f)" % (v[0], v[1]))
+            nodes[k] = n
+            graph.add_node(n)
+        for src, dst in enumerate(self.map.roads):
+            for d in dst:
+                if (src,d) not in edges:
+                    distance = math.sqrt(math.pow(self.map.intersections[src][0] - self.map.intersections[d][0], 2) + \
+                                         math.pow(self.map.intersections[src][1] - self.map.intersections[d][1], 2))
+                    edges.add((src,d))
+                    edges.add((d,src))
+                    if src in path and d in path:
+                        color = colors[1]
+                        style="bold"
+                    else:
+                        color = "black"
+                        style = "dashed"
+                    graph.add_edge(pydot.Edge(nodes[src], nodes[d], style=style, label="%0.2f" % distance, color=color, tooltip="%0.2f" % distance))
+        graph.write_svg(output_file)
+
 if __name__ == '__main__':
     map_40 = Map(Map40.intersections, Map40.roads)
-    start_node_id = 5
-    dest_node_id = 34
-    astar = AStar(map_40, start_node_id, dest_node_id)
-    print(astar.search())
+    astar = AStar(map_40)
+    # Assumes the program is executed from current directory
+    astar.draw_astar_map(path=astar.search(5, 34), colors=['aquamarine', 'gold'], output_file="../data/map40_5_34.svg")
+    astar.draw_astar_map(path=astar.search(8, 24), colors=['deepskyblue', 'gold'], output_file="../data/map40_8_24.svg")
 
