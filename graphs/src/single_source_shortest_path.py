@@ -55,7 +55,6 @@ class SingleSourceShortestPath:
         # Start from source node
         queue.append(self.source)
         visited = set()
-        visited.add(self.source)
         while len(queue) > 0:
             node = queue.pop(0)
             if node in visited: continue
