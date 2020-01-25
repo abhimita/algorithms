@@ -20,6 +20,7 @@ def string_match_brute_force(text, word):
 # a % b = ( a + b) % b - we may need to do this if 'a' becomes negative
 # (a + b ) % c = ((a % c) + (b % c)) % c
 # (a * b) % c = ((a %c) * (b % c)) %c
+# Useful link - https://stackoverflow.com/questions/22216948/python-rabin-karp-algorithm-hashing
 def rolling_hash(text, pattern):
     p_len = len(pattern)
     t_len = len(text)
