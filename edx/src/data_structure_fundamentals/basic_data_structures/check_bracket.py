@@ -26,5 +26,5 @@ def find_mismatch(str):
         return 'Success'
 
 if __name__ == '__main__':
-    print(check_bracket('{{pqr}}()'))
+    print(find_mismatch('{{pqr}}()'))
 
