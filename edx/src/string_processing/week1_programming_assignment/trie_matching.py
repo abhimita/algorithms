@@ -1,4 +1,4 @@
-import sys
+import unittest
 
 def build_trie(patterns):
     tree = {}
@@ -26,15 +26,30 @@ def solve(text, n , patterns):
         for c in text[i:]:
             if tree.get(index, '') != '' and tree[index].get(c, '') != '':
                 index = tree[index][c]
-                if list(tree[index].keys())[0] == '$':
+                if '$' in list(tree[index].keys()):
                     match_found = True
                     break
             else:
                 break
         if match_found:
             result.append(i)
-    print(result)
+    return result
+
+class TestTrieMatching(unittest.TestCase):
+
+    def test_match_single_pattern(self):
+        text = 'AAA'
+        patterns = ['AA']
+        actual = solve(text, len(patterns), patterns)
+        assert sorted(actual) == [0, 1]
+
+    def test_match_three_patterns(self):
+        text = 'ACATA'
+        patterns = ['AT', 'A', 'AG']
+        actual = solve(text, len(patterns), patterns)
+        print(actual)
+        assert sorted(actual) == [0, 2, 4]
 
 if __name__ == '__main__':
-    solve('AATCGGGTTCAATCGGGGT', 2, ['ATCG', 'GGGT'])
-    solve('AAAAC', 1, ['AAC'])
+    unittest.main(argv=[''], verbosity=2, exit=False)
+

@@ -64,4 +64,5 @@ class TestTrieMatchingExtended(unittest.TestCase):
         text = 'ACATA'
         self.execute(text, patterns)
 
-unittest.main(argv=[''], verbosity=2, exit=False)
+if __name__ == '__main__':
+    unittest.main(argv=[''], verbosity=2, exit=False)

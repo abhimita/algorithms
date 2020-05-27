@@ -1,4 +1,5 @@
 import sys
+import unittest
 
 def maximal_match(str1, str2):
     index = 0
@@ -49,7 +50,25 @@ def build_suffix_tree(text):
         edges.extend(list(e[1].keys()))
     return edges
 
+class TestSuffixTree(unittest.TestCase):
+
+    def test_suffix_tree_for_small_string(self):
+        text = "A$"
+        actual = build_suffix_tree(text)
+        expected = ['A$', '$']
+        assert sorted(actual) == sorted(expected)
+
+    def test_suffix_tree_for_medium_string(self):
+        text = "ACA$"
+        actual = build_suffix_tree(text)
+        expected = ['$', 'A', '$', 'CA$', 'CA$']
+        assert sorted(actual) == sorted(expected)
+
+    def test_suffix_tree_for_long_string(self):
+        text = "ATAAATG$"
+        actual = build_suffix_tree(text)
+        expected = ['AAATG$', 'G$', 'T', 'ATG$', 'TG$', 'A', 'A', 'AAATG$', 'G$', 'T', 'G$', '$']
+        assert sorted(actual) == sorted(expected)
+
 if __name__ == '__main__':
-    text = sys.stdin.readline().strip()
-    result = build_suffix_tree(text)
-    print("\n".join(result))
+    unittest.main(argv=[''], verbosity=2, exit=False)
