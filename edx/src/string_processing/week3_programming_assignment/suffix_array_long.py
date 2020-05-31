@@ -2,6 +2,8 @@ import sys
 import unittest
 import numpy as np
 
+# Ref: very good reference of step-by-step construction of suffix array with O(nlogn) complexity
+# https://cp-algorithms.com/string/suffix-array.html#toc-tgt-3
 # sa -> suffix array
 # equiv -> equivalence class
 alphabet = {'$': 0, 'A': 1, 'C' : 2, 'G' : 3, 'T': 4}
