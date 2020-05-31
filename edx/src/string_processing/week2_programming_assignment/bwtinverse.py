@@ -73,9 +73,9 @@ def InverseBWT(bwt):
 
 # The following is a naive algorithm for BWT
 # It requires storing of MxM matrix.
-# Time complexity is n^2*log(n) because it involves a sort with complexity O(nlogn)
+# Time complexity is n^3*log(n) because it involves a sort with complexity O(nlogn)
 # Comparison involving n character long string is O(n)
-# So the total complexity in n^2*logn
+# So the total complexity in n^3*logn
 def BWT(str):
     str_matrix = []
     for i in range(0, len(str)):
